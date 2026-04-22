@@ -137,3 +137,10 @@ The SDK automatically retries on HTTP 429 and 5xx errors with exponential backof
 
 - Python 3.10+
 - Zero runtime dependencies (uses `urllib` stdlib)
+
+## Links
+
+- [API Documentation](https://verifip.com/docs)
+- [GitHub](https://github.com/qubit-hq/verifip-python)
+- [PyPI](https://pypi.org/project/verifip/)
+- [Changelog](https://github.com/qubit-hq/verifip-python/releases)
