@@ -96,6 +96,198 @@ class HealthResponse:
         )
 
 
+@dataclass
+class EmailResponse:
+    """Response from an email validation check."""
+
+    request_id: str = ""
+    email: str = ""
+    risk_score: int = 0
+    valid_syntax: bool = False
+    mx_found: bool = False
+    is_disposable: bool = False
+    is_free_provider: bool = False
+    is_role_based: bool = False
+    domain_age_days: int = 0
+    domain: str = ""
+    signal_breakdown: dict[str, int] = field(default_factory=dict)
+    error: str | None = None
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> EmailResponse:
+        if not isinstance(data, dict):
+            return cls()
+        return cls(
+            request_id=data.get("request_id", ""),
+            email=data.get("email", ""),
+            risk_score=data.get("risk_score", 0),
+            valid_syntax=data.get("valid_syntax", False),
+            mx_found=data.get("mx_found", False),
+            is_disposable=data.get("is_disposable", False),
+            is_free_provider=data.get("is_free_provider", False),
+            is_role_based=data.get("is_role_based", False),
+            domain_age_days=data.get("domain_age_days", 0),
+            domain=data.get("domain", ""),
+            signal_breakdown=data.get("signal_breakdown", {}),
+            error=data.get("error"),
+        )
+
+
+@dataclass
+class PhoneResponse:
+    """Response from a phone validation check."""
+
+    request_id: str = ""
+    phone: str = ""
+    risk_score: int = 0
+    valid: bool = False
+    country_code: str = ""
+    carrier: str = ""
+    line_type: str = ""
+    is_voip: bool = False
+    signal_breakdown: dict[str, int] = field(default_factory=dict)
+    error: str | None = None
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> PhoneResponse:
+        if not isinstance(data, dict):
+            return cls()
+        return cls(
+            request_id=data.get("request_id", ""),
+            phone=data.get("phone", ""),
+            risk_score=data.get("risk_score", 0),
+            valid=data.get("valid", False),
+            country_code=data.get("country_code", ""),
+            carrier=data.get("carrier", ""),
+            line_type=data.get("line_type", ""),
+            is_voip=data.get("is_voip", False),
+            signal_breakdown=data.get("signal_breakdown", {}),
+            error=data.get("error"),
+        )
+
+
+@dataclass
+class URLResponse:
+    """Response from a URL reputation check."""
+
+    request_id: str = ""
+    url: str = ""
+    risk_score: int = 0
+    is_phishing: bool = False
+    is_malware: bool = False
+    safe_browsing_threat: str = ""
+    in_phishtank: bool = False
+    spamhaus_dbl: bool = False
+    domain_age_days: int = 0
+    ssl_valid: bool = False
+    ssl_issuer: str = ""
+    signal_breakdown: dict[str, int] = field(default_factory=dict)
+    error: str | None = None
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> URLResponse:
+        if not isinstance(data, dict):
+            return cls()
+        return cls(
+            request_id=data.get("request_id", ""),
+            url=data.get("url", ""),
+            risk_score=data.get("risk_score", 0),
+            is_phishing=data.get("is_phishing", False),
+            is_malware=data.get("is_malware", False),
+            safe_browsing_threat=data.get("safe_browsing_threat", ""),
+            in_phishtank=data.get("in_phishtank", False),
+            spamhaus_dbl=data.get("spamhaus_dbl", False),
+            domain_age_days=data.get("domain_age_days", 0),
+            ssl_valid=data.get("ssl_valid", False),
+            ssl_issuer=data.get("ssl_issuer", ""),
+            signal_breakdown=data.get("signal_breakdown", {}),
+            error=data.get("error"),
+        )
+
+
+@dataclass
+class WHOISResponse:
+    """Response from a WHOIS/RDAP lookup."""
+
+    request_id: str = ""
+    ip: str = ""
+    network_cidr: str = ""
+    network_name: str = ""
+    org_name: str = ""
+    abuse_contact: str = ""
+    rir: str = ""
+    allocation_date: str = ""
+    country_code: str = ""
+    asn: int = 0
+    asn_org: str = ""
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> WHOISResponse:
+        if not isinstance(data, dict):
+            return cls()
+        return cls(
+            request_id=data.get("request_id", ""),
+            ip=data.get("ip", ""),
+            network_cidr=data.get("network_cidr", ""),
+            network_name=data.get("network_name", ""),
+            org_name=data.get("org_name", ""),
+            abuse_contact=data.get("abuse_contact", ""),
+            rir=data.get("rir", ""),
+            allocation_date=data.get("allocation_date", ""),
+            country_code=data.get("country_code", ""),
+            asn=data.get("asn", 0),
+            asn_org=data.get("asn_org", ""),
+        )
+
+
+@dataclass
+class ReportResponse:
+    """Response from a fraud report submission."""
+
+    request_id: str = ""
+    status: str = ""
+    message: str = ""
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> ReportResponse:
+        if not isinstance(data, dict):
+            return cls()
+        return cls(
+            request_id=data.get("request_id", ""),
+            status=data.get("status", ""),
+            message=data.get("message", ""),
+        )
+
+
+@dataclass
+class AssessResponse:
+    """Response from a unified multi-entity assessment."""
+
+    request_id: str = ""
+    overall_risk: int = 0
+    ip: CheckResponse | None = None
+    email: EmailResponse | None = None
+    phone: PhoneResponse | None = None
+    url: URLResponse | None = None
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> AssessResponse:
+        if not isinstance(data, dict):
+            return cls()
+        ip_data = data.get("ip")
+        email_data = data.get("email")
+        phone_data = data.get("phone")
+        url_data = data.get("url")
+        return cls(
+            request_id=data.get("request_id", ""),
+            overall_risk=data.get("overall_risk", 0),
+            ip=CheckResponse.from_dict(ip_data) if ip_data else None,
+            email=EmailResponse.from_dict(email_data) if email_data else None,
+            phone=PhoneResponse.from_dict(phone_data) if phone_data else None,
+            url=URLResponse.from_dict(url_data) if url_data else None,
+        )
+
+
 def _get_header(headers: dict[str, str], name: str) -> str | None:
     """Case-insensitive header lookup."""
     lower = name.lower()

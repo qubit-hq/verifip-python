@@ -9,7 +9,18 @@ from .exceptions import (
     ServerError,
     VerifIPError,
 )
-from .models import BatchResponse, CheckResponse, HealthResponse, RateLimitInfo
+from .models import (
+    AssessResponse,
+    BatchResponse,
+    CheckResponse,
+    EmailResponse,
+    HealthResponse,
+    PhoneResponse,
+    RateLimitInfo,
+    ReportResponse,
+    URLResponse,
+    WHOISResponse,
+)
 
 __all__ = [
     "__version__",
@@ -18,6 +29,12 @@ __all__ = [
     "BatchResponse",
     "HealthResponse",
     "RateLimitInfo",
+    "EmailResponse",
+    "PhoneResponse",
+    "URLResponse",
+    "WHOISResponse",
+    "ReportResponse",
+    "AssessResponse",
     "VerifIPError",
     "AuthenticationError",
     "RateLimitError",

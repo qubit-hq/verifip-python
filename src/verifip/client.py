@@ -18,7 +18,18 @@ from .exceptions import (
     ServerError,
     VerifIPError,
 )
-from .models import BatchResponse, CheckResponse, HealthResponse, RateLimitInfo
+from .models import (
+    AssessResponse,
+    BatchResponse,
+    CheckResponse,
+    EmailResponse,
+    HealthResponse,
+    PhoneResponse,
+    RateLimitInfo,
+    ReportResponse,
+    URLResponse,
+    WHOISResponse,
+)
 
 _DEFAULT_BASE_URL = "https://api.verifip.com"
 _DEFAULT_TIMEOUT = 30.0
@@ -100,6 +111,65 @@ class VerifIPClient:
         body = json.dumps({"ips": ips}).encode()
         data = self._request("POST", "/v1/check/batch", body=body)
         return BatchResponse.from_dict(data)
+
+    def check_email(self, email: str) -> EmailResponse:
+        """Check an email address for fraud risk."""
+        if not email:
+            raise ValueError("email is required")
+        data = self._request("GET", f"/v1/email?email={urllib.parse.quote(email, safe='')}")
+        return EmailResponse.from_dict(data)
+
+    def check_phone(self, phone: str) -> PhoneResponse:
+        """Check a phone number for fraud risk."""
+        if not phone:
+            raise ValueError("phone is required")
+        data = self._request("GET", f"/v1/phone?phone={urllib.parse.quote(phone, safe='')}")
+        return PhoneResponse.from_dict(data)
+
+    def check_url(self, url: str) -> URLResponse:
+        """Check a URL for reputation and threats."""
+        if not url:
+            raise ValueError("url is required")
+        data = self._request("GET", f"/v1/url?url={urllib.parse.quote(url, safe='')}")
+        return URLResponse.from_dict(data)
+
+    def check_whois(self, ip: str) -> WHOISResponse:
+        """Look up WHOIS/RDAP information for an IP address."""
+        if not ip:
+            raise ValueError("ip is required")
+        data = self._request("GET", f"/v1/whois?ip={urllib.parse.quote(ip, safe='')}")
+        return WHOISResponse.from_dict(data)
+
+    def report(self, ip: str, is_fraud: bool, category: str = "", comment: str = "") -> ReportResponse:
+        """Submit a fraud report for an IP address."""
+        if not ip:
+            raise ValueError("ip is required")
+        payload: dict[str, Any] = {"ip": ip, "is_fraud": is_fraud}
+        if category:
+            payload["category"] = category
+        if comment:
+            payload["comment"] = comment
+        body = json.dumps(payload).encode()
+        data = self._request("POST", "/v1/report", body=body)
+        return ReportResponse.from_dict(data)
+
+    def assess(
+        self, *, ip: str = "", email: str = "", phone: str = "", url: str = ""
+    ) -> AssessResponse:
+        """Unified multi-entity risk assessment. Only checks provided entities."""
+        params: list[str] = []
+        if ip:
+            params.append(f"ip={urllib.parse.quote(ip, safe='')}")
+        if email:
+            params.append(f"email={urllib.parse.quote(email, safe='')}")
+        if phone:
+            params.append(f"phone={urllib.parse.quote(phone, safe='')}")
+        if url:
+            params.append(f"url={urllib.parse.quote(url, safe='')}")
+        if not params:
+            raise ValueError("at least one parameter required: ip, email, phone, or url")
+        data = self._request("GET", f"/v1/assess?{'&'.join(params)}")
+        return AssessResponse.from_dict(data)
 
     def health(self) -> HealthResponse:
         """Check API server health status. Does not require authentication."""
